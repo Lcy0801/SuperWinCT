@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "element-plus": "^2.2.26",
+    "mapbox-gl": "^2.11.1",
     "vue": "^3.2.45"
   },
   "devDependencies": {
