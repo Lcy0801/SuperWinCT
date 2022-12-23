@@ -7,6 +7,7 @@ import { onMounted } from "vue";
 import map2d from "../map2d"
 onMounted(() => {
     map2d.initMap();
+    map2d.animationDemo();
 });
 </script>
 <style lang="css">
