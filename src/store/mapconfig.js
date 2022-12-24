@@ -3,7 +3,8 @@ export const mapboxToken =
 export const tdtToken = "13aaaf7907b41c2e04034d430da1ce36";
 const tdtVec = `http://t0.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles&tk=${tdtToken}`;
 const tdtVecAnn = `http://t0.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles&tk=${tdtToken}`;
-// mapbox 地图配置项
+
+// mapbox 5地图配置项
 export const mapStyle = {
   version: 8,
   sources: {
