@@ -34,7 +34,8 @@
 <script setup>
 import { ref, watch, reactive } from 'vue';
 import map2d from "../map2d";
-import {baseMapUrls} from "../store/mapconfig"
+import { baseMapUrls } from "../store/mapconfig"
+import { eventbus } from '../event';
 //控制面板显隐
 let bottomPos = ref("-160px");
 const showPanel = () => {
@@ -80,6 +81,7 @@ watch(selectedLayer, (newLayer, oldLayer) => {
     if (!isAnnShow.value) { 
         map2d.map.setLayoutProperty("baseMapAnn", 'visibility', 'none');
     }
+    eventbus.emit("changeBaseMap", newLayer);
 });
 //标注图层的打开与关闭
 let isAnnShow = ref(true);
