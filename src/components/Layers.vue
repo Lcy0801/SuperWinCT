@@ -26,7 +26,7 @@
         </div>
         <h1 class="showPlaceName">
             <span>地名</span>
-            <input type="checkbox"  id="showPlaceName">
+            <input type="checkbox"  id="showPlaceName" v-model="isAnnShow">
         </h1>
     </div>
 </template>
@@ -77,6 +77,18 @@ watch(selectedLayer, (newLayer, oldLayer) => {
       type: "raster",
       source: "baseMapAnn",
     });
+    if (!isAnnShow.value) { 
+        map2d.map.setLayoutProperty("baseMapAnn", 'visibility', 'none');
+    }
+});
+//标注图层的打开与关闭
+let isAnnShow = ref(true);
+watch(isAnnShow, () => {
+    if (isAnnShow.value) {
+        map2d.map.setLayoutProperty("baseMapAnn", 'visibility', 'visible');
+    } else { 
+        map2d.map.setLayoutProperty("baseMapAnn", 'visibility', 'none');
+    }
 });
 </script>
 
