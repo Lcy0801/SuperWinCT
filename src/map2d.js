@@ -13,6 +13,7 @@ class Map2d {
     this.map = null;
   }
   initMap() {
+    window.GeoJSON=GeoJSON;
     this.map = new mapboxgl.Map({
       accessToken: mapboxToken,
       antialias: true,
@@ -59,6 +60,27 @@ class Map2d {
       a.download="draw.json";
       a.click();
     });
+    //绘制上传的数据
+    eventbus.on("uploadDraw",async ()=>{
+      const inputFile=document.createElement("input");
+      inputFile.type="file";
+      inputFile.multiple=false;
+      inputFile.accept=".json,.JSON,.geojson,.GEOJSON";
+      inputFile.addEventListener("change",()=>{
+        if(inputFile.files.length===0){
+          return;
+        }
+        const file=inputFile.files[0];
+        const reader=new FileReader();
+        reader.onload=()=>{
+          const inputFeatures=JSON.parse(reader.result);
+          this.draw.add(inputFeatures);
+          alert("上传成功!");
+        };
+        reader.readAsText(file);
+      });
+      inputFile.click();
+    })
     //底图切换事件
     eventbus.on("changeBaseMap", () => {
       console.log("底图切换成功!");
