@@ -6,6 +6,8 @@ import mapboxGlDraw from "@mapbox/mapbox-gl-draw";
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 //导入事件总线
 import {eventbus} from "./event"
+import { createApp } from "vue";
+import ExportDraw from "./components/ExportDraw.vue";
 class Map2d {
   constructor() {
     this.map = null;
@@ -29,22 +31,40 @@ class Map2d {
     this.map.addControl(nav, "top-right");
     //添加地图绘制控件
     this.draw=new mapboxGlDraw({
-      displayControlsDefault:true
+      displayControlsDefault:false,
+      controls:{
+        point:true,
+        line_string:true,
+        polygon:true,
+        trash:true
+      }
     });
     this.map.addControl(this.draw);
+    //挂载导出组件
+    const exportDom=document.createElement("div");
+    exportDom.className="mapboxgl-ctrl-group mapboxgl-ctrl";
+    createApp(ExportDraw).mount(exportDom);
+    document.querySelector(".mapboxgl-ctrl-top-right").appendChild(exportDom);
+    //底图切换事件
     eventbus.on("changeBaseMap", () => {
       console.log("底图切换成功!");
       const drawFeatures=this.draw.getAll();
       this.map.removeControl(this.draw);
       this.draw=new mapboxGlDraw({
-        displayControlsDefault:true
+        displayControlsDefault:false,
+        controls:{
+          point:true,
+          line_string:true,
+          polygon:true,
+          trash:true
+        }
       });
       this.map.addControl(this.draw);
       this.draw.add(drawFeatures);
+      //移动导出组件的位置
+      document.querySelector(".mapboxgl-ctrl-top-right").removeChild(exportDom);
+      document.querySelector(".mapboxgl-ctrl-top-right").appendChild(exportDom);
     });
-    this.map.on("load",()=>{
-      console.log(123);
-    })
     //坐标拾取工具
     this.map.on("click", (e) => {
       console.log(e.lngLat);
