@@ -99,10 +99,11 @@ watch(selectedLayer, (newLayer, oldLayer) => {
     type: "raster",
     source: "baseMapAnn",
   });
+
   if (!isAnnShow.value) {
     map2d.map.setLayoutProperty("baseMapAnn", "visibility", "none");
   }
-  eventbus.emit("changeBaseMap", newLayer);
+  eventbus.emit("changeBaseMap");
 });
 //标注图层的打开与关闭
 let isAnnShow = ref(true);
