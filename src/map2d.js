@@ -45,6 +45,20 @@ class Map2d {
     exportDom.className="mapboxgl-ctrl-group mapboxgl-ctrl";
     createApp(ExportDraw).mount(exportDom);
     document.querySelector(".mapboxgl-ctrl-top-right").appendChild(exportDom);
+    //导出绘制的数据
+    eventbus.on("exportDraw",()=>{
+      const drawFeatures=this.draw.getAll();
+      if(drawFeatures.features.length===0){
+        alert("没有需要导出的数据！");
+        return;
+      }
+      const featuresGeoJson=JSON.stringify(drawFeatures);
+      const blob=new Blob([featuresGeoJson],{type:"text/json"});
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);
+      a.download="draw.json";
+      a.click();
+    });
     //底图切换事件
     eventbus.on("changeBaseMap", () => {
       console.log("底图切换成功!");
