@@ -8,12 +8,13 @@ import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import {eventbus} from "./event"
 import { createApp } from "vue";
 import ExportDraw from "./components/ExportDraw.vue";
+//导入turf
+import * as turf from "@turf/turf";
 class Map2d {
   constructor() {
     this.map = null;
   }
   initMap() {
-    window.GeoJSON=GeoJSON;
     this.map = new mapboxgl.Map({
       accessToken: mapboxToken,
       antialias: true,
@@ -76,6 +77,9 @@ class Map2d {
           const inputFeatures=JSON.parse(reader.result);
           this.draw.add(inputFeatures);
           alert("上传成功!");
+          const bounds=turf.bbox(inputFeatures);
+          console.log(bounds);
+          this.map.fitBounds([[bounds[0],bounds[3]],[bounds[2],bounds[1]]]);
         };
         reader.readAsText(file);
       });
