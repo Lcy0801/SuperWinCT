@@ -8,6 +8,7 @@ import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import { eventbus } from "./event"
 import { createApp } from "vue";
 import ExportDraw from "./components/ExportDraw.vue";
+import { lonlat2tile } from "./utils/tiles";
 //导入turf
 import * as turf from "@turf/turf";
 class Map2d {
@@ -19,12 +20,13 @@ class Map2d {
       accessToken: mapboxToken,
       antialias: true,
       container: "mapContainer",
-      style: mapStyle,
+      style:"mapbox://styles/mapbox/streets-v12",
       center: [113.12302920024092, 31.76274963518034],
       zoom: 6,
       maxZoom: 17,
       minZoom: 0,
     });
+
     //添加缩放控件
     const nav = new mapboxgl.NavigationControl({
       showCompass: true,
@@ -110,11 +112,19 @@ class Map2d {
       console.log(e.lngLat);
       console.log(e.point);
     });
+    const image=new Image();
+    image.src="agg.png";
+    image.onload=()=>{
+      image.width=50;
+      image.height=50;
+      this.map.addImage("demo",image);
+    };
+
     //读取数据
     const poidata = await fetch("poi.geojson").then(res => { return res.json() });
     //打印当前地图缩放级别
     this.map.on("moveend", () => {
-      const level = this.map.getZoom();
+      const level = this.map.getZoom().toFixed(0);
       console.log(`打印当前地图的缩放级别${level}`);
       //移除图层
       this.map.getLayer("poi") && this.map.removeLayer("poi");
@@ -124,8 +134,61 @@ class Map2d {
       if(aggFlag){
         //加载聚合数据
         //计算每一个poi点在当前地图层级下所属于的瓦片编号,在同一地图瓦片下的poi点进行聚合:统计每一个瓦片下poi点的数目
-        
-        
+        const dataAgg={};
+        poidata.features.forEach((poi)=>{
+          //经纬度
+          const [lon,lat]=poi.geometry.coordinates;
+          const [tilex,tiley]=lonlat2tile(lon,lat,level);
+          const key=`${tilex}_${tiley}`;
+          if(dataAgg[key]){
+            dataAgg[key].num+=1;
+            dataAgg[key].lon+=lon;
+            dataAgg[key].lat+=lat;
+          }else{
+            dataAgg[key]={
+              num:1,
+              lon,
+              lat
+            }
+          }
+        });
+        //计算每一个瓦片内poi点的中心坐标并将聚合的结果转为geojson
+        let aggFeatures=[];
+        for(const key in dataAgg){
+          const lon= dataAgg[key].lon/dataAgg[key].num;
+          const lat= dataAgg[key].lat/dataAgg[key].num;
+          const num=dataAgg[key].num;
+          aggFeatures.push({
+            type:"Feature",
+            geometry:{
+              type:"Point",
+              coordinates:[lon,lat]
+            },
+            properties:{num}
+          });
+        }
+        const aggGeojson={
+          type:"FeatureCollection",
+          features:aggFeatures
+        };
+        this.map.addSource("poi",{
+          type:"geojson",
+          data:aggGeojson
+        });
+        this.map.addLayer({
+          id:"poi",
+          type:"symbol",
+          source:"poi",
+          layout:{
+            visibility:"visible",
+            "icon-image":"demo",
+            "text-field":"{num}",
+          },
+          paint:{
+            "text-color":"#FFFFFF",
+            "icon-opacity":0.5
+          }
+        });
       }else{
         //加载非聚合数据
 

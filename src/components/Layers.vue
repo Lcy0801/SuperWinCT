@@ -63,7 +63,7 @@ const showPanel = () => {
   bottomPos.value = bottomPos.value === "10px" ? "-160px" : "10px";
 };
 //图层切换
-let selectedLayer = ref("Vec");
+let selectedLayer = ref("");
 let selectedFlag = reactive({
   Vec: "border:1px solid gray",
   Img: "border:0px solid gray",
@@ -75,10 +75,10 @@ watch(selectedLayer, (newLayer, oldLayer) => {
   //更换底图
   const newTile = baseMapUrls[`tdt${newLayer}`];
   const newAnnTile = baseMapUrls[`tdt${newLayer}Ann`];
-  map2d.map.removeLayer("baseMap");
-  map2d.map.removeLayer("baseMapAnn");
-  map2d.map.removeSource("baseMap");
-  map2d.map.removeSource("baseMapAnn");
+  map2d.map.getLayer("baseMap") &&map2d.map.removeLayer("baseMap");
+  map2d.map.getLayer("baseMapAnn")&& map2d.map.removeLayer("baseMapAnn");
+  map2d.map.getSource("baseMap") &&map2d.map.removeSource("baseMap");
+  map2d.map.getSource("baseMapAnn")&&map2d.map.removeSource("baseMapAnn");
   map2d.map.addSource("baseMap", {
     type: "raster",
     tiles: [newTile],
