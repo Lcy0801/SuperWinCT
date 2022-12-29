@@ -1,42 +1,61 @@
 <template lang="">
     <div id="transform">
-        <div id="selectSR">
-            <ElSelect
-            v-model="sourceSR"
-            style="width:100px"
+        <div>
+            <el-radio-group v-model="sourceSR">
+                <ElRadioButton label="坐标系" size="default" disabled>坐标系</ElRadioButton>
+                <ElRadioButton label="WGS84" size="default">WGS84</ElRadioButton>
+                <ElRadioButton label="GCJ02" size="default">GCJ02</ElRadioButton>
+                <ElRadioButton label="BD09" size="default">BD09</ElRadioButton>
+                <ElRadioButton label="SHCJ" size="default">SHCJ</ElRadioButton>
+              </el-radio-group>
+        </div>
+        <div id="coordInput">
+            <ElInput>
+                <template #prepend>
+                    <span style="width:59px">坐标：</span>
+                </template>
+                <template #suffix>
+                    <button id="location" title="在地图上拾取点"></button>
+                </template>
+                <template #append>
+                    <ElButton type="success">转换</ElButton>
+                </template>
+            </ElInput>
+        </div>
+        <div id="result">
+            <ElTable 
+            :data="resultData" 
+            border 
+            style="width: 100%"
+            :show-header="false"
+            :row-style="{height: '10px'}"
             >
-                <ElOption
-                v-for="(item,index) in spatialRefs"
-                :key="index"
-                :label="item"
-                :value="item"
-                :disabled="destSR===item"
-                />
-            </ElSelect>
-            <img id="arrow" src="../assets/arrow.png" alt="转换为">
-            <ElSelect
-            v-model="destSR"
-            style="width:100px"
-            >
-                <ElOption
-                v-for="(item,index) in spatialRefs"
-                :key="index"
-                :label="item"
-                :value="item"
-                :disabled="sourceSR===item"
-                />
-            </ElSelect>
+                <el-table-column prop="srName"  width="100"/>
+                <el-table-column prop="coordinate" width="240" />
+                <el-table-column prop="copyBt" width="100"/>
+            </ElTable>
         </div>
     </div>
 </template>
 <script setup>
-import {ElSelect,ElOption} from "element-plus";
-import 'element-plus/es/components/select/style/css'
-import 'element-plus/es/components/option/style/css'
-import { ref } from "vue";
-const spatialRefs=["SHCG","WGS84","GCJ02","BD09"];
-let sourceSR=ref("SHCG");
-let destSR=ref("WGS84");
+import { ElRadioGroup,ElInput,ElButton,ElRadioButton,ElTable } from "element-plus";
+import "element-plus/dist/index.css"
+import { ref,reactive } from "vue";
+let sourceSR=ref("WGS84");
+let resultData=reactive([
+    {
+        srName:"WGS84"
+    },
+    {
+        srName:"GCJ02"
+    },
+    {
+        srName:"BD09"
+    },
+    {
+        srName:"SHCJ"
+    }
+])
 </script>
 <style lang="css">
 #transform{
@@ -46,24 +65,33 @@ let destSR=ref("WGS84");
     left: 10px;
     background-color: white;
     box-shadow: 0px 0px 5px 3px gray;
-    width: 252px;
+    width: 440px;
 }
 
-#selectSR{
-    overflow: hidden;
+.el-radio-button{
+    width: 85px;
 }
 
-#selectSR > *{
-    float: left;
-}
-#arrow{
-    width: 32px;
-    margin-left: 10px;
-    margin-right: 10px;
-    display: inline;
+.el-input-group__prepend{
+    border-radius: 0px;
 }
 
-.el-input__wrapper{
+#location{
+    background-image: url("../assets/location.png");
+    background-size: cover;
+    width: 20px;
+    height: 20px;
+    border: 0px;
+    background-color: white;
+}
+
+#location:hover{
+    cursor: pointer;
+}
+
+.el-button{
+    background-color:#409EFF !important;
+    width: 100px;
     border-radius: 0px;
 }
 
