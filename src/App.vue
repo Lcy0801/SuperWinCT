@@ -1,6 +1,5 @@
 <template lang="">
   <div id="root">
-    <Transform></Transform>
     <Map></Map>
     <Layers></Layers>
   </div>
@@ -9,7 +8,6 @@
 <script setup>
 import Map from "./components/Map.vue";
 import Layers from "./components/Layers.vue";
-import Transform from "./components/Transform.vue";
 </script>
 
 <style lang="css">
