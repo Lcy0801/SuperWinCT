@@ -11,6 +11,7 @@ import ExportDraw from "./components/ExportDraw.vue";
 import { lonlat2tile } from "./utils/tiles";
 //导入turf
 import * as turf from "@turf/turf";
+
 class Map2d {
   constructor() {
     this.map = null;
@@ -124,8 +125,8 @@ class Map2d {
     this.map.on("moveend", () => {
       //打印当前地图缩放级别与四至范围
       const level = this.map.getZoom().toFixed(0);
-      console.log(`打印当前地图的缩放级别${level}`);
-      console.log('打印当前地图的四至范围',this.map.getBounds());
+      console.log(`打印当前地图的缩放级别${this.map.getZoom()}`);
+      console.log('打印当前地图的四至范围', this.map.getBounds());
       //移除图层
       this.map.getLayer("poi") && this.map.removeLayer("poi");
       this.map.getSource("poi") && this.map.removeSource("poi");
@@ -186,7 +187,7 @@ class Map2d {
           },
           paint:{
             "text-color":"#FFFFFF",
-            "icon-opacity":0.5
+            "icon-opacity":0.8
           }
         });
       }else{

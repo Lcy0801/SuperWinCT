@@ -60,7 +60,7 @@ import { eventbus } from "../event";
 //控制面板显隐
 let bottomPos = ref("-160px");
 const showPanel = () => {
-  bottomPos.value = bottomPos.value === "10px" ? "-160px" : "10px";
+  bottomPos.value = bottomPos.value === "30px" ? "-160px" : "30px";
 };
 //图层切换
 let selectedLayer = ref("");
@@ -120,7 +120,7 @@ watch(isAnnShow, () => {
 #layerControl {
   position: absolute;
   z-index: 9999;
-  bottom: 10px;
+  bottom: 30px;
   right: 10px;
   background-color: white;
   border-radius: 3px;
