@@ -21,7 +21,7 @@ class Map2d {
       accessToken: mapboxToken,
       antialias: true,
       container: "mapContainer",
-      style:"mapbox://styles/mapbox/streets-v12",
+      style:"mapbox://styles/chaoying/clc94ci5t000215pk0lwgump6",
       center: [113.12302920024092, 31.76274963518034],
       zoom: 6,
       maxZoom: 17,
@@ -182,7 +182,8 @@ class Map2d {
           source:"poi",
           layout:{
             visibility:"visible",
-            "icon-image":"aggLabel",
+            "icon-image":"aggcircle",
+            "icon-size":0.3,
             "text-field":"{num}",
           },
           paint:{
