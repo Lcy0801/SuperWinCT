@@ -26,7 +26,6 @@ class Map2d {
       maxZoom: 17,
       minZoom: 0,
     });
-
     //添加缩放控件
     const nav = new mapboxgl.NavigationControl({
       showCompass: true,
@@ -112,25 +111,26 @@ class Map2d {
       console.log(e.lngLat);
       console.log(e.point);
     });
+    //添加聚合符号的图标，用于设置聚合图层的icon-image属性
     const image=new Image();
     image.src="agg.png";
     image.onload=()=>{
       image.width=50;
       image.height=50;
-      this.map.addImage("demo",image);
+      this.map.addImage("aggLabel",image);
     };
-
     //读取数据
     const poidata = await fetch("poi.geojson").then(res => { return res.json() });
-    //打印当前地图缩放级别
     this.map.on("moveend", () => {
+      //打印当前地图缩放级别与四至范围
       const level = this.map.getZoom().toFixed(0);
       console.log(`打印当前地图的缩放级别${level}`);
+      console.log('打印当前地图的四至范围',this.map.getBounds());
       //移除图层
       this.map.getLayer("poi") && this.map.removeLayer("poi");
       this.map.getSource("poi") && this.map.removeSource("poi");
       //判断是否需要聚合
-      const aggFlag = level <= 18 ? true : false;
+      const aggFlag = level <= 10 ? true : false;
       if(aggFlag){
         //加载聚合数据
         //计算每一个poi点在当前地图层级下所属于的瓦片编号,在同一地图瓦片下的poi点进行聚合:统计每一个瓦片下poi点的数目
@@ -181,7 +181,7 @@ class Map2d {
           source:"poi",
           layout:{
             visibility:"visible",
-            "icon-image":"demo",
+            "icon-image":"aggLabel",
             "text-field":"{num}",
           },
           paint:{
@@ -191,7 +191,38 @@ class Map2d {
         });
       }else{
         //加载非聚合数据
-
+        //此时只加载在当前视口范围内的点
+        const bounds=this.map.getBounds();
+        const east=bounds.getEast();
+        const west=bounds.getWest();
+        const north=bounds.getNorth();
+        const south=bounds.getSouth();
+        const poiFeatures=poidata.features.filter(poi=>{
+          const [lon,lat]=poi.geometry.coordinates;
+          return lon>=west && lon<=east && lat>=south &&lat<=north;
+        });
+        const filterPoiGeoJson={
+          type:"FeatureCollection",
+          features:poiFeatures
+        };
+        this.map.addSource("poi",{
+          type:"geojson",
+          data:filterPoiGeoJson
+        });
+        this.map.addLayer({
+          id:"poi",
+          type:"circle",
+          source:"poi",
+          layout:{
+            visibility:"visible"
+          },
+          paint:{
+            "circle-radius":6,
+            "circle-stroke-width":3,
+            "circle-color":"#FF0000",
+            "circle-stroke-color":"#FFFFFF"
+          }
+        });
       }
     })
   }

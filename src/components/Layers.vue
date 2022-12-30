@@ -65,7 +65,7 @@ const showPanel = () => {
 //图层切换
 let selectedLayer = ref("");
 let selectedFlag = reactive({
-  Vec: "border:1px solid gray",
+  Vec: "border:0px solid gray",
   Img: "border:0px solid gray",
   Ter: "border:0px solid gray",
 });
